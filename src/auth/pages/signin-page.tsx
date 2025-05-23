@@ -74,8 +74,8 @@ export function SignInPage() {
   const form = useForm<SigninSchemaType>({
     resolver: zodResolver(getSigninSchema()),
     defaultValues: {
-      email: 'demo@kt.com',
-      password: 'demo123',
+      email: 'firoj.ahmad@gmail.com',
+      password: 'Firoj123',
       rememberMe: true,
     },
   });
@@ -156,18 +156,7 @@ export function SignInPage() {
             Welcome back! Log in with your credentials.
           </p>
         </div>
-
-        <Alert appearance="light" size="sm" close={false}>
-          <AlertIcon>
-            <AlertCircle className="text-primary" />
-          </AlertIcon>
-          <AlertTitle className="text-accent-foreground">
-            Use <strong>demo@kt.com</strong> username and {` `}
-            <strong>demo123</strong> password for demo access.
-          </AlertTitle>
-        </Alert>
-
-        <div className="flex flex-col gap-3.5">
+        {/* <div className="flex flex-col gap-3.5">
           <Button
             variant="outline"
             type="button"
@@ -185,16 +174,16 @@ export function SignInPage() {
               </>
             )}
           </Button>
-        </div>
+        </div> */}
 
-        <div className="relative py-1.5">
+        {/* <div className="relative py-1.5">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-background px-2 text-muted-foreground">or</span>
           </div>
-        </div>
+        </div> */}
 
         {error && (
           <Alert

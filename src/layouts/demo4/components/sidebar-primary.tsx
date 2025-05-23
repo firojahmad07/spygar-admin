@@ -49,18 +49,7 @@ const menuItems: MenuItem[] = [
     rootPath: '/',
     path: '/dashboard'
   },
-  {
-    tooltip: 'Products',
-    icon: SquareChartGantt,
-    rootPath: '/product/',
-    path: '/product/listing'
-  },
-  {
-    tooltip: 'Workflow',
-    icon: Cable,
-    rootPath: '/workflow/',
-    path: '/workflow/dashboard'
-  },
+
   {
     tooltip: 'Blogs',
     icon: BookOpenText,
@@ -68,23 +57,29 @@ const menuItems: MenuItem[] = [
     path: '/blogs'
   },
   {
+    tooltip: 'Products',
+    icon: SquareChartGantt,
+    rootPath: '/product/',
+    path: '/product/listing'
+  },
+  
+  {
     tooltip: 'Store',
     icon: ShoppingCart,
     rootPath: '/store/',
     path: '/store'
   },
   {
-    tooltip: 'Settings',
-    icon: Settings,
-    path: '/settings/categories/',
-    rootPath: '/settings/',
-
-  },
-  {
     tooltip: 'System',
     icon: Settings2,
     path: '/system/catalog-monitoring',
     rootPath: '/system/',
+  },
+  {
+    tooltip: 'Workflow',
+    icon: Cable,
+    rootPath: '/workflow/',
+    path: '/workflow/dashboard'
   },
 
 

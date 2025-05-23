@@ -12,6 +12,7 @@ export default defineConfig({
     },
   },
   server: {
+    host: '0.0.0.0',
     port: 9002, // Change this to any available port
     strictPort: true, // Ensures Vite fails if the port is already in use
     hmr: {

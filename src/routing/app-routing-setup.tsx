@@ -103,7 +103,6 @@ import {
   WorkflowIndex,
   BlogIndex,
   StoreIndex,
-  SettingIndex,
   SystemIndex
 } from '@/pages';
 
@@ -119,9 +118,6 @@ export function AppRoutingSetup() {
           <Route path="/workflow/*" element={<WorkflowIndex />} />
           <Route path="/blogs/*" element={<BlogIndex />} />
           <Route path="/store/*" element={<StoreIndex />} />
-          <Route path="/store/*" element={<StoreIndex />} />
-
-          <Route path="/settings/*" element={<SettingIndex />} />
           <Route path="/system/*" element={<SystemIndex />} />
 
 
