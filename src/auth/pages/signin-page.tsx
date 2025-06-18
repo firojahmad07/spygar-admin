@@ -74,8 +74,8 @@ export function SignInPage() {
   const form = useForm<SigninSchemaType>({
     resolver: zodResolver(getSigninSchema()),
     defaultValues: {
-      email: 'firoj.ahmad@gmail.com',
-      password: 'Firoj123',
+      email: 'john@spygar.com',
+      password: 'Admin123',      
       rememberMe: true,
     },
   });

@@ -7,6 +7,7 @@ import { SidebarSecondary } from './sidebar-secondary';
 export function Sidebar() {
 
     const contextData = useContext(SidebarContext);
+
     const sideBarIsVisible = contextData?.sidebarMenu.length != 0 ? true : false;
     const sideBarVisible = contextData?.sidebarMenu.length != 0 ? '--sidebar-width' : '--sidebar-shrink-width';
 

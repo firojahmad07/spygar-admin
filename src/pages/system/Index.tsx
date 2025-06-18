@@ -1,2 +1,7 @@
-export * from "./dashboard/Dashboard"
+// export * from "./dashboard/Dashboard"
 export * from "./SystemIndex"
+export * from "./users/Index"
+export * from "./catalog-monitoring/Index"
+export * from "./configuration/Index"
+export * from "./roles/Index"
+export * from "./users/components/EditUser"

@@ -218,7 +218,6 @@ export function SidebarMenuDefault() {
 
   const contextData = useContext(SidebarContext);
 
-  console.log("menuItems : ", menuItems);
   return (
     <AccordionMenu
       selectedValue={pathname}

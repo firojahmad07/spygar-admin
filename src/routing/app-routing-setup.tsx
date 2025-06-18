@@ -120,7 +120,6 @@ export function AppRoutingSetup() {
           <Route path="/store/*" element={<StoreIndex />} />
           <Route path="/system/*" element={<SystemIndex />} />
 
-
           {/* <Route path="/" element={<DefaultPage />} /> */}
           <Route path="/dark-sidebar" element={<Demo1DarkSidebarPage />} />
           <Route

@@ -1,9 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { StoreAdminCreateShippingLabelSheet } from '@/pages/store-admin/components/create-shipping-label-sheet';
-import { StoreAdminTrackShippingSheet } from '@/pages/store-admin/components/track-shipping-sheet';
 import { RiCheckboxCircleFill } from '@remixicon/react';
+import { Badge, BadgeDot, BadgeProps } from '@/components/ui/badge';
+
+const defaultAvatar = "";
 import {
   ColumnDef,
   getCoreRowModel,
@@ -27,16 +29,14 @@ import {
 } from 'lucide-react';
 
 import { toast } from 'sonner';
-import { toAbsoluteUrl } from '@/lib/helpers';
+import { formatDateTime, toAbsoluteUrl } from '@/lib/helpers';
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
 import { Alert, AlertIcon, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardFooter, CardHeader, CardTable } from '@/components/ui/card';
 import { DataGrid } from '@/components/ui/data-grid';
 import { DataGridColumnHeader } from '@/components/ui/data-grid-column-header';
 import { DataGridPagination } from '@/components/ui/data-grid-pagination';
-
 import {
   DataGridTable,
   DataGridTableRowSelect,
@@ -58,7 +58,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Link } from 'react-router';
+import { formatDate } from 'date-fns';
 
 interface IProductInfo {
   product: string;
@@ -93,13 +93,14 @@ interface ISupplier {
 
 interface IData {
   id: string;
-  info: IProductInfo;
-  stock: IStock;
-  delta: IDelta;
-  price: string;
-  category: string;
-  supplier: ISupplier;
-  updated: string;
+  firstName: string;
+  email: string;
+  lastName: string;
+  fullName: string;
+  userType: string;
+  status: boolean;
+  created: string;
+  lastLogin: string;
 }
 
 const data: IData[] = [
@@ -441,6 +442,8 @@ const data: IData[] = [
   },
 ];
 
+
+
 function ActionsCell({ row }: { row: Row<IData> }) {
   const { copyToClipboard } = useCopyToClipboard();
   const handleCopyId = () => {
@@ -485,38 +488,36 @@ function ActionsCell({ row }: { row: Row<IData> }) {
   );
 }
 
-export function AllPlanning() {
-  const [isTrackShippingSheetOpen, setTrackShippingSheetOpen] = useState(false);
-  const [isCreateShippingLabelSheetOpen, setCreateShippingLabelSheetOpen] =
-    useState(false);
 
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: 'customer', desc: true },
-  ]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStatuses] = useState<string[]>([]);
+export function UsersData({usersData}) {
 
-  const filteredData = useMemo(() => {
-    return data.filter((item) => {
-      // Filter by status
-      const matchesStatus =
-        !selectedStatuses?.length || selectedStatuses.includes(item.info.name);
+  // const [sorting, setSorting] = useState<SortingState>([
+  //   { id: 'id', desc: true },
+  // ]);
+  // const [searchQuery, setSearchQuery] = useState('');
+  // const [selectedStatuses] = useState<string[]>([]);
+  // const [userData, setUsersData] = useState([])
+  // const loadUsers = async () => {
 
-      // Filter by search query (case-insensitive)
-      const searchLower = searchQuery.toLowerCase();
-      const matchesSearch =
-        !searchQuery ||
-        item.category.toLowerCase().includes(searchLower) ||
-        item.supplier.name.toLowerCase().includes(searchLower) ||
-        item.price.toLowerCase().includes(searchLower);
 
-      return matchesStatus && matchesSearch;
-    });
-  }, [searchQuery, selectedStatuses]);
+
+  // const filteredData = useMemo(() => {
+  //   return data.filter((item) => {
+  //     // Filter by status
+  //     const matchesStatus =
+  //       !selectedStatuses?.length || selectedStatuses.includes(item.info.fullName);
+
+  //     // Filter by search query (case-insensitive)
+  //     const searchLower = searchQuery.toLowerCase();
+  //     const matchesSearch =
+  //       !searchQuery ||
+  //       item.category.toLowerCase().includes(searchLower) ||
+  //       item.supplier.name.toLowerCase().includes(searchLower) ||
+  //       item.price.toLowerCase().includes(searchLower);
+
+  //     return matchesStatus && matchesSearch;
+  //   });
+  // }, [searchQuery, selectedStatuses]);
 
   const columns = useMemo<ColumnDef<IData>[]>(
     () => [
@@ -533,19 +534,19 @@ export function AllPlanning() {
       },
       {
         id: 'info',
-        accessorFn: (row) => row.info.name,
+        accessorFn: (row) => row.fullName,
         header: ({ column }) => (
-          <DataGridColumnHeader title="Product Info" column={column} />
+          <DataGridColumnHeader title="User" column={column} />
         ),
         cell: ({ row }) => (
           <div className="flex items-center gap-2.5">
             <div className="flex items-center justify-center border border-border bg-accent/50 rounded-md h-10 w-[50px]">
               <img
                 src={toAbsoluteUrl(
-                  `/media/store/client/600x600${row.original.info.product}`,
+                  `/media/avatars/300-2.png`,
                 )}
                 className="rounded-full size-10 shrink-0"
-                alt={`${row.original.info.name} image`}
+                alt={`demo image`}
               />
             </div>
             <div className="flex flex-col gap-0.5">
@@ -553,12 +554,13 @@ export function AllPlanning() {
                 href="#"
                 className="leading-none font-medium text-sm text-mono hover:text-primary"
               >
-                {row.original.info.name}
+                {row.original.fullName}
               </a>
               <div className="text-xs text-secondary-foreground">
-                SKU:{' '}
-                <span className="text-foreground font-medium">
-                  {row.original.info.sku}
+
+                {/* <div class="text-muted-foreground text-xs">janfkahsai@gmail.com</div> */}
+                <span className="text-muted-foreground text-xs">
+                  {row.original.email}                  
                 </span>
               </div>
             </div>
@@ -569,119 +571,34 @@ export function AllPlanning() {
         meta: { cellClassName: '' },
       },
       {
-        id: 'stock',
-        accessorFn: (row) => row.stock.value1,
+        id: 'Created',
+        accessorFn: (row) => row.created,
         header: ({ column }) => (
-          <DataGridColumnHeader title="Stock Flow" column={column} />
-        ),
-        cell: ({ row }) => (
-          <div className="flex flex-col gap-1">
-            <span className="flex items-center gap-2 text-sm text-mono font-medium">
-              <span className="flex items-center gap-1">
-                <Database size={16} className="text-sm text-muted-foreground" />
-                {row.original.stock.value1}
-              </span>
-              <span className="border-r border-r-input h-4"></span>
-              <span className="flex items-center gap-1">
-                <LogIn size={16} className="text-sm text-muted-foreground" />
-                {row.original.stock.value2}
-              </span>
-              <span className="border-r border-r-input h-4"></span>
-              <span className="flex items-center gap-1">
-                <LogOut size={16} className="text-sm text-muted-foreground" />
-                {row.original.stock.value3}
-              </span>
-            </span>
-          </div>
-        ),
-        enableSorting: true,
-        size: 180,
-        meta: { cellClassName: '' },
-      },
-      {
-        id: 'delta',
-        accessorFn: (row) => row.delta.label,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Delta" column={column} />
-        ),
-        cell: ({ row }) => (
-          <div className="text-center">
-            <Badge
-              size="sm"
-              variant={row.original.delta.variant}
-              appearance="outline"
-            >
-              {row.original.delta.label}
-            </Badge>
-          </div>
-        ),
-        enableSorting: true,
-        size: 80,
-        meta: { cellClassName: '' },
-      },
-      {
-        id: 'price',
-        accessorFn: (row) => row.price,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Price" column={column} />
-        ),
-        cell: ({ row }) => (
-          <span className="font-medium text-mono">${row.original.price}</span>
-        ),
-        enableSorting: true,
-        size: 82,
-        meta: { cellClassName: '' },
-      },
-      {
-        id: 'category',
-        accessorFn: (row) => row.category,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Category" column={column} />
+          <DataGridColumnHeader title="Joined" column={column} />
         ),
         cell: ({ row }) => (
           <span className="text-secondary-foreground font-normal">
-            {row.original.category}
+            {row.original.created}
           </span>
         ),
         enableSorting: true,
-        size: 105,
+        size: 130,
         meta: { cellClassName: '' },
       },
       {
-        id: 'supplier',
-        accessorFn: (row) => row.supplier.name,
+        id: 'Created',
+        accessorFn: (row) => row.lastLogin,
         header: ({ column }) => (
-          <DataGridColumnHeader title="Supplier" column={column} />
+          <DataGridColumnHeader title="Last Sign In" column={column} />
         ),
-        cell: ({ row }) => (
-          <div className="flex items-center gap-1.5">
-            <img
-              src={toAbsoluteUrl(
-                `/media/brand-logos/${row.original.supplier.logo}`,
-              )}
-              className="h-4 rounded-full"
-              alt={`${row.original.supplier.name} logo`}
-            />
-            <span className="leading-none text-foreground font-normal">
-              {row.original.supplier.name}
+        cell: ({ row }) => {
+          const lastSignIn = new Date(row.original?.lastLogin);
+          return (
+            <span className="text-secondary-foreground font-normal">
+            {row.original.lastLogin}
             </span>
-          </div>
-        ),
-        enableSorting: true,
-        size: 140,
-        meta: { cellClassName: '' },
-      },
-      {
-        id: 'updated',
-        accessorFn: (row) => row.updated,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Updated" column={column} />
-        ),
-        cell: ({ row }) => (
-          <span className="text-secondary-foreground font-normal">
-            {row.original.updated}
-          </span>
-        ),
+          )
+        },
         enableSorting: true,
         size: 130,
         meta: { cellClassName: '' },
@@ -690,16 +607,15 @@ export function AllPlanning() {
         id: 'actions',
         header: '',
         cell: ({ row }) => (
-          // :id/edit
           <div className="flex flex-col gap-1">
             <span className="flex items-center gap-3 text-sm text-mono font-medium">
               <span className="flex items-center gap-1">
                 <Trash2 size={16} className="text-sm text-muted-foreground" />
               </span>
               <span className="border-r border-r-input h-4"></span>
-              <Link to={`/product/3/edit/attributes`} className="flex items-center gap-1">
+              <span className="flex items-center gap-1">
                 <SquarePen size={16} className="text-sm text-muted-foreground" />
-              </Link>
+              </span>
             </span>
           </div>
         ),
@@ -713,52 +629,64 @@ export function AllPlanning() {
     [],
   );
 
+  // const table = useReactTable({
+  //   // columns,
+  //   // data: usersData,
+  //   // pageCount: 15
+  //   // getRowId: (row: IData) => row.id,
+  //   // state: {
+  //     // pagination,
+  //     // sorting,
+  //   // }
+  //   // onPaginationChange: setPagination,
+  //   // onSortingChange: setSorting,
+  //   // getCoreRowModel: getCoreRowModel(),
+  //   // getFilteredRowModel: getFilteredRowModel(),
+  //   // getPaginationRowModel: getPaginationRowModel(),
+  //   // getSortedRowModel: getSortedRowModel(),
+  // });
+
+
+
   const table = useReactTable({
     columns,
-    data: filteredData,
-    pageCount: Math.ceil((filteredData?.length || 0) / pagination.pageSize),
-    getRowId: (row: IData) => row.id,
-    state: {
-      pagination,
-      sorting,
-    },
-    onPaginationChange: setPagination,
-    onSortingChange: setSorting,
+    data: usersData,
+    pageCount: 15,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
 
-  const handleTrackShippingSheetClose = () => {
-    setTrackShippingSheetOpen(false);
-  };
+  // const handleTrackShippingSheetClose = () => {
+  //   setTrackShippingSheetOpen(false);
+  // };
 
-  const handleTrackShippingSheetOpen = () => {
-    setTrackShippingSheetOpen(true);
-  };
+  // const handleTrackShippingSheetOpen = () => {
+  //   setTrackShippingSheetOpen(true);
+  // };
 
-  const handleCreateShippingLabelSheetClose = () => {
-    setCreateShippingLabelSheetOpen(false);
-  };
+  // const handleCreateShippingLabelSheetClose = () => {
+  //   setCreateShippingLabelSheetOpen(false);
+  // };
 
-  const handleCreateShippingLabelSheetOpen = () => {
-    setCreateShippingLabelSheetOpen(true);
-  };
+  // const handleCreateShippingLabelSheetOpen = () => {
+  //   setCreateShippingLabelSheetOpen(true);
+  // };
 
   return (
     <DataGrid
       table={table}
-      recordCount={filteredData?.length || 0}
+      recordCount={data?.length || 0}
       tableLayout={{
-        columnsPinnable: true,
+        columnsPinnable: false,
         columnsMovable: true,
         columnsVisibility: false,
         cellBorder: true,
       }}
     >
       <Card className="min-w-full">
-        <CardHeader className="py-5 flex-wrap gap-2">
+        {/* <CardHeader className="py-5 flex-wrap gap-2">
           <div className="flex gap-5">
             <div className="relative w-full max-w-[200px]">
               <Search className="size-4 text-muted-foreground absolute start-3 top-1/2 -translate-y-1/2" />
@@ -780,19 +708,6 @@ export function AllPlanning() {
               )}
             </div>
             <div className="flex gap-3">
-              <Select>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="2 June - 9 June" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="outdoor">Outdoor</SelectItem>
-                  <SelectItem value="runners">Runners</SelectItem>
-                  <SelectItem value="sneakers">Sneakers</SelectItem>
-                  <SelectItem value="outdoor">Outdoor</SelectItem>
-                  <SelectItem value="runners">Runners</SelectItem>
-                </SelectContent>
-              </Select>
-
               <Select>
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Category" />
@@ -821,32 +736,25 @@ export function AllPlanning() {
           </div>
 
           <>
-            <Button variant="mono" onClick={handleTrackShippingSheetOpen}>
-              Stock Planner
+            <Button variant="primary" 
+              onClick={handleCreateShippingLabelSheetOpen}>
+              Create
             </Button>
-            <Button variant="mono" onClick={handleCreateShippingLabelSheetOpen}>
-              Create Shipping Label
-            </Button>
-
-            <StoreAdminTrackShippingSheet
-              open={isTrackShippingSheetOpen}
-              onOpenChange={handleTrackShippingSheetClose}
-            />
             <StoreAdminCreateShippingLabelSheet
               open={isCreateShippingLabelSheetOpen}
               onOpenChange={handleCreateShippingLabelSheetClose}
             />
           </>
-        </CardHeader>
+        </CardHeader> */}
+        {/* <CardFooter>
+          <DataGridPagination />
+        </CardFooter> */}
         <CardTable>
           <ScrollArea>
             <DataGridTable />
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
-        </CardTable>
-        <CardFooter>
-          <DataGridPagination />
-        </CardFooter>
+        </CardTable>       
       </Card>
     </DataGrid>
   );

@@ -9,6 +9,7 @@ export interface UserHeroInfo {
   email?: string;
   label?: string;
   icon?: LucideIcon | null;
+  data?: string
 }
 
 export interface UserHeroProps {
@@ -22,7 +23,7 @@ export function UserHero({ image, name, info }: UserHeroProps) {
   const buildInfo = (info: UserHeroInfo[]) => {
     return info.map((item, index) => {
       return (
-        <div className="flex gap-1.25 items-center" key={`info-${index}`}>
+        <div className="flex flex-co gap-1.25" key={`info-${index}`}>
           {item.icon && (
             <item.icon size={16} className="text-muted-foreground text-sm" />
           )}
@@ -37,7 +38,7 @@ export function UserHero({ image, name, info }: UserHeroProps) {
             </Link>
           ) : (
             <span className="text-secondary-foreground font-medium">
-              {item.label}
+              {item.label} | {item.data}
             </span>
           )}
         </div>
@@ -56,9 +57,9 @@ export function UserHero({ image, name, info }: UserHeroProps) {
       }}
     >
       <Container>
-        <div className="flex flex-col items-center gap-2 lg:gap-3.5 py-4 lg:pt-5 lg:pb-10">
+        <div className="flex flex-col gap-2 lg:gap-3.5 py-4 lg:pt-5 lg:pb-10">
           {image}
-          <div className="flex items-center gap-1.5">
+          <div className="flex gap-1.5">
             <div className="text-lg leading-5 font-semibold text-mono">
               {name}
             </div>
@@ -76,7 +77,7 @@ export function UserHero({ image, name, info }: UserHeroProps) {
               />
             </svg>
           </div>
-          <div className="flex flex-wrap justify-center gap-1 lg:gap-4.5 text-sm">
+          <div className="flex flex-wrap  gap-1 lg:gap-4.5 text-sm">
             {buildInfo(info)}
           </div>
         </div>
