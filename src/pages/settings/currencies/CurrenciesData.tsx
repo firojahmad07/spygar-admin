@@ -60,6 +60,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+
 import { formatDate } from 'date-fns';
 
 interface IProductInfo {
@@ -95,14 +96,8 @@ interface ISupplier {
 
 interface IData {
   id: string;
-  firstName: string;
-  email: string;
-  lastName: string;
-  fullName: string;
-  userType: string;
-  status: boolean;
-  created: string;
-  lastLogin: string;
+  code: string;
+  isActive: boolean;
 }
 
 function ActionsCell({ row }: { row: Row<IData> }) {
@@ -150,7 +145,8 @@ function ActionsCell({ row }: { row: Row<IData> }) {
 }
 export interface User {
   id: string;
-  name: string;
+  code: string;
+  isActive: boolean;
   // add more fields as needed
 }
 export interface UsersResponse {
@@ -163,7 +159,7 @@ export interface UsersResponse {
   };
 }
 
-export function UsersData() {
+export function CurrenciesData() {
   const [data, setData] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [pagination, setPagination] = useState<PaginationState>({
@@ -174,7 +170,7 @@ export function UsersData() {
     { id: 'id', desc: true },
   ]);
   useEffect( () => {
-    apiFetcher.get<UsersResponse, any>('/users')
+    apiFetcher.get<UsersResponse, any>('/currencies')
       .then((responseData: AxiosResponse<UsersResponse, any>) => {
         setData(responseData.member);
         setPagination(responseData.meta);
@@ -222,35 +218,16 @@ export function UsersData() {
       },
       {
         id: 'info',
-        accessorFn: (row) => row.fullName,
+        accessorFn: (row) => row.code,
         header: ({ column }) => (
-          <DataGridColumnHeader title="User" column={column} />
+          <DataGridColumnHeader title="Code" column={column} />
         ),
         cell: ({ row }) => (
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center border border-border bg-accent/50 rounded-md h-10 w-[50px]">
-              <img
-                src={toAbsoluteUrl(
-                  `/media/avatars/300-2.png`,
-                )}
-                className="rounded-full size-10 shrink-0"
-                alt={`demo image`}
-              />
-            </div>
             <div className="flex flex-col gap-0.5">
-              <a
-                href="#"
-                className="leading-none font-medium text-sm text-mono hover:text-primary"
-              >
-                {row.original.fullName}
-              </a>
-              <div className="text-xs text-secondary-foreground">
-
-                {/* <div class="text-muted-foreground text-xs">janfkahsai@gmail.com</div> */}
-                <span className="text-muted-foreground text-xs">
-                  {row.original.email}                  
-                </span>
-              </div>
+              <span className="leading-none font-medium text-sm text-mono hover:text-primary">
+                {row.original.code}
+              </span>
             </div>
           </div>
         ),
@@ -259,36 +236,26 @@ export function UsersData() {
         meta: { cellClassName: '' },
       },
       {
-        id: 'Created',
-        accessorFn: (row) => row.created,
+        id: 'status',
+        accessorFn: (row) => row.code,
         header: ({ column }) => (
-          <DataGridColumnHeader title="Joined" column={column} />
-        ),
-        cell: ({ row }) => (
-          <span className="text-secondary-foreground font-normal">
-            {row.original.created}
-          </span>
-        ),
-        enableSorting: true,
-        size: 130,
-        meta: { cellClassName: '' },
-      },
-      {
-        id: 'Created',
-        accessorFn: (row) => row.lastLogin,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Last Sign In" column={column} />
+          <DataGridColumnHeader title="Status" column={column} />
         ),
         cell: ({ row }) => {
-          const lastSignIn = new Date(row.original?.lastLogin);
+          const variant = row.original.isActive ? 'success' : 'destructive';
+          const statusLabel = row.original.isActive ? 'Active' : 'Inactive';
           return (
-            <span className="text-secondary-foreground font-normal">
-            {row.original.lastLogin}
-            </span>
+            <Badge
+              size="sm"
+              variant={variant}
+              appearance="outline"
+            >
+              {statusLabel}
+            </Badge>
           )
         },
         enableSorting: true,
-        size: 130,
+        size: 300,
         meta: { cellClassName: '' },
       },
       {

@@ -60,6 +60,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+
 import { formatDate } from 'date-fns';
 
 interface IProductInfo {
@@ -95,14 +96,7 @@ interface ISupplier {
 
 interface IData {
   id: string;
-  firstName: string;
-  email: string;
-  lastName: string;
-  fullName: string;
-  userType: string;
-  status: boolean;
-  created: string;
-  lastLogin: string;
+  code: string;
 }
 
 function ActionsCell({ row }: { row: Row<IData> }) {
@@ -150,7 +144,7 @@ function ActionsCell({ row }: { row: Row<IData> }) {
 }
 export interface User {
   id: string;
-  name: string;
+  code: string;
   // add more fields as needed
 }
 export interface UsersResponse {
@@ -163,7 +157,7 @@ export interface UsersResponse {
   };
 }
 
-export function UsersData() {
+export function ChannelsData() {
   const [data, setData] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [pagination, setPagination] = useState<PaginationState>({
@@ -174,7 +168,7 @@ export function UsersData() {
     { id: 'id', desc: true },
   ]);
   useEffect( () => {
-    apiFetcher.get<UsersResponse, any>('/users')
+    apiFetcher.get<UsersResponse, any>('/channels')
       .then((responseData: AxiosResponse<UsersResponse, any>) => {
         setData(responseData.member);
         setPagination(responseData.meta);
@@ -222,73 +216,21 @@ export function UsersData() {
       },
       {
         id: 'info',
-        accessorFn: (row) => row.fullName,
+        accessorFn: (row) => row.code,
         header: ({ column }) => (
-          <DataGridColumnHeader title="User" column={column} />
+          <DataGridColumnHeader title="Code" column={column} />
         ),
         cell: ({ row }) => (
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center border border-border bg-accent/50 rounded-md h-10 w-[50px]">
-              <img
-                src={toAbsoluteUrl(
-                  `/media/avatars/300-2.png`,
-                )}
-                className="rounded-full size-10 shrink-0"
-                alt={`demo image`}
-              />
-            </div>
             <div className="flex flex-col gap-0.5">
-              <a
-                href="#"
-                className="leading-none font-medium text-sm text-mono hover:text-primary"
-              >
-                {row.original.fullName}
-              </a>
-              <div className="text-xs text-secondary-foreground">
-
-                {/* <div class="text-muted-foreground text-xs">janfkahsai@gmail.com</div> */}
-                <span className="text-muted-foreground text-xs">
-                  {row.original.email}                  
-                </span>
-              </div>
+              <span className="leading-none font-medium text-sm text-mono hover:text-primary">
+                {row.original.code}
+              </span>
             </div>
           </div>
         ),
         enableSorting: true,
         size: 300,
-        meta: { cellClassName: '' },
-      },
-      {
-        id: 'Created',
-        accessorFn: (row) => row.created,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Joined" column={column} />
-        ),
-        cell: ({ row }) => (
-          <span className="text-secondary-foreground font-normal">
-            {row.original.created}
-          </span>
-        ),
-        enableSorting: true,
-        size: 130,
-        meta: { cellClassName: '' },
-      },
-      {
-        id: 'Created',
-        accessorFn: (row) => row.lastLogin,
-        header: ({ column }) => (
-          <DataGridColumnHeader title="Last Sign In" column={column} />
-        ),
-        cell: ({ row }) => {
-          const lastSignIn = new Date(row.original?.lastLogin);
-          return (
-            <span className="text-secondary-foreground font-normal">
-            {row.original.lastLogin}
-            </span>
-          )
-        },
-        enableSorting: true,
-        size: 130,
         meta: { cellClassName: '' },
       },
       {

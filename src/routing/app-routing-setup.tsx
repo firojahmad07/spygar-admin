@@ -79,19 +79,19 @@ import {
   ProjectColumn3Page,
 } from '@/pages/public-profile';
 import { AllProductsPage, DashboardPage } from '@/pages/store-admin';
-import {
-  MyOrdersPage,
-  OrderPlacedPage,
-  OrderReceiptPage,
-  OrderSummaryPage,
-  PaymentMethodPage,
-  ProductDetailsPage,
-  SearchResultsGridPage,
-  SearchResultsListPage,
-  ShippingInfoPage,
-  StoreClientPage,
-  WishlistPage,
-} from '@/pages/store-client';
+// import {
+//   MyOrdersPage,
+//   OrderPlacedPage,
+//   OrderReceiptPage,
+//   OrderSummaryPage,
+//   PaymentMethodPage,
+//   ProductDetailsPage,
+//   SearchResultsGridPage,
+//   SearchResultsListPage,
+//   ShippingInfoPage,
+//   StoreClientPage,
+//   WishlistPage,
+// } from '@/pages/store-client';
 import { Navigate, Route, Routes } from 'react-router';
 
 
@@ -103,8 +103,11 @@ import {
   WorkflowIndex,
   BlogIndex,
   StoreIndex,
-  SystemIndex
+  SystemIndex,
+  SettingsIndex,
 } from '@/pages';
+
+import { SearchResultsListPage as AssetsPage } from "@/pages/assets/search-results-list-page"
 
 export function AppRoutingSetup() {
   return (
@@ -118,6 +121,8 @@ export function AppRoutingSetup() {
           <Route path="/workflow/*" element={<WorkflowIndex />} />
           <Route path="/blogs/*" element={<BlogIndex />} />
           <Route path="/store/*" element={<StoreIndex />} />
+          <Route path="/assets/*" element={<AssetsPage />} />
+          <Route path="/settings/*" element={<SettingsIndex />} />
           <Route path="/system/*" element={<SystemIndex />} />
 
           {/* <Route path="/" element={<DefaultPage />} /> */}
@@ -360,12 +365,12 @@ export function AppRoutingSetup() {
             path="/auth/account-deactivated"
             element={<AuthAccountDeactivatedPage />}
           />
-          <Route path="/store-client/home" element={<StoreClientPage />} />
+          {/* <Route path="/store-client/home" element={<StoreClientPage />} />
           <Route
             path="/store-client/search-results-grid"
             element={<SearchResultsGridPage />}
-          />
-          <Route
+          /> */}
+          {/* <Route
             path="/store-client/search-results-list"
             element={<SearchResultsListPage />}
           />
@@ -394,7 +399,7 @@ export function AppRoutingSetup() {
           <Route
             path="/store-client/order-receipt"
             element={<OrderReceiptPage />}
-          />
+          /> */}
           <Route path="/store-admin/dashboard" element={<DashboardPage />} />
           <Route
             path="/store-admin/inventory/all-products"

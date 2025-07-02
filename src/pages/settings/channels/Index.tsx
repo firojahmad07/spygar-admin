@@ -1,15 +1,15 @@
 import { Container } from '@/components/common/container';
-import { UsersData } from './UsersData';
+import { ChannelsData } from './ChannelsData';
 import {useState, useEffect} from 'react';
 
 
 
-const Users = () => {
+const ChannelsIndex = () => {
   return (
     <Container>
-      <UsersData/>
+      <ChannelsData/>
     </Container>
   );
 }
 
-export { Users }
+export { ChannelsIndex }

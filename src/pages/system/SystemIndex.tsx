@@ -21,11 +21,6 @@ const SystemIndex = () => {
             { heading: 'User Management' },
             { title: 'User', path: '/system/users' },
             { title: 'Roles', path: '/system/roles' },
-
-            { heading: 'Catalog' },
-            { title: 'Categories', path: '/system/categories' },
-            { title: 'Rules', path: '/system/rules' },
-            { title: 'Identifier Generator', path: '/system/identifier-generator' },
         ],
         []
     );
@@ -41,13 +36,7 @@ const SystemIndex = () => {
             <Route>
                 {/* System */}
                 <Route path='/catalog-monitoring' element={ <CatalogMonitoring /> } />
-                <Route path='/configuration' element={ <ConfigurationPage /> } />
-
-                {/* Catalog */}
-                <Route path='/categories' element={ <AllProductsPage /> } />
-                <Route path='/rules' element={ <AllProductsPage /> } />
-                <Route path='/identifier-generator' element={ <AllProductsPage /> } />
-                
+                <Route path='/configuration' element={ <ConfigurationPage /> } />                
                 {/* user navigation */}
                 <Route path='/users' element={ <Users /> }/>
                 <Route path='/user/:id/edit' element={ <EditUser /> }/>

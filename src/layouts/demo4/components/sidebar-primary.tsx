@@ -19,6 +19,7 @@ import {
   ShoppingCart,
   SquareChartGantt,
   UserCircle,
+  Images,
   BookOpenText,
   Users,
 } from 'lucide-react';
@@ -33,6 +34,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  
 } from '@/components/ui/tooltip';
 
 interface MenuItem {
@@ -70,6 +72,18 @@ const menuItems: MenuItem[] = [
     path: '/store'
   },
   {
+    tooltip: 'Assets',
+    icon: Images,
+    path: '/assets',
+    rootPath: '/',
+  },
+  {
+    tooltip: 'Settings',
+    icon: Settings,
+    path: '/settings/categories',
+    rootPath: '/settings/',
+  },
+  {
     tooltip: 'System',
     icon: Settings2,
     path: '/system/catalog-monitoring',
@@ -80,58 +94,7 @@ const menuItems: MenuItem[] = [
     icon: Cable,
     rootPath: '/workflow/',
     path: '/workflow/dashboard'
-  },
-
-
-  // {
-  //   icon: UserCircle,
-  //   tooltip: 'Profile',
-  //   path: '/public-profile/profiles/default',
-  //   rootPath: '/public-profile/',
-  // },
-  // {
-  //   icon: Settings,
-  //   tooltip: 'Account',
-  //   path: '/account/home/get-started',
-  //   rootPath: '/account/',
-  // },
-  // {
-  //   icon: Users,
-  //   tooltip: 'Network',
-  //   path: '/network/get-started',
-  //   rootPath: '/network/',
-  // },
-  // {
-  //   icon: ShoppingCart,
-  //   tooltip: 'Store - Client',
-  //   path: '/store-client/home',
-  //   rootPath: '',
-  // },
-  // {
-  //   icon: Shield,
-  //   tooltip: 'Authentication',
-  //   path: '/authentication/get-started',
-  //   rootPath: '/authentication/',
-  // },
-  // {
-  //   icon: MessageSquare,
-  //   tooltip: 'Security Logs',
-  //   path: '/account/security/security-log',
-  //   rootPath: '/account/',
-  // },
-  // {
-  //   icon: Bell,
-  //   tooltip: 'Notifications',
-  //   path: '/account/notifications',
-  //   rootPath: '',
-  // },
-  // {
-  //   icon: CheckSquare,
-  //   tooltip: 'ACL',
-  //   path: '/account/members/roles',
-  //   rootPath: '',
-  // },
-  // { icon: Code, tooltip: 'API Keys', path: '/account/api-keys', rootPath: '' },
+  }
 ];
 
 
