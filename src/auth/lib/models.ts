@@ -7,7 +7,9 @@ export type LanguageCode = 'en' | 'de' | 'es' | 'fr' | 'ja' | 'zh';
 // Auth model representing the authentication session
 export interface AuthModel {
   access_token: string;
-  refresh_token?: string;
+  token: string;
+  refreshToken?: string;
+  api_token: string;
 }
 
 // User model representing the user profile

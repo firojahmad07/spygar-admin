@@ -36,6 +36,7 @@ import { Card, CardFooter, CardHeader, CardTable } from '@/components/ui/card';
 import { DataGrid } from '@/components/ui/data-grid';
 import { DataGridColumnHeader } from '@/components/ui/data-grid-column-header';
 import { DataGridPagination } from '@/components/ui/data-grid-pagination';
+
 import {
   DataGridTable,
   DataGridTableRowSelect,
@@ -57,6 +58,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Link } from 'react-router';
 
 interface IProductInfo {
   product: string;
@@ -688,15 +690,16 @@ export function AllPlanning() {
         id: 'actions',
         header: '',
         cell: ({ row }) => (
+          // :id/edit
           <div className="flex flex-col gap-1">
             <span className="flex items-center gap-3 text-sm text-mono font-medium">
               <span className="flex items-center gap-1">
                 <Trash2 size={16} className="text-sm text-muted-foreground" />
               </span>
               <span className="border-r border-r-input h-4"></span>
-              <span className="flex items-center gap-1">
+              <Link to={`/product/3/edit/attributes`} className="flex items-center gap-1">
                 <SquarePen size={16} className="text-sm text-muted-foreground" />
-              </span>
+              </Link>
             </span>
           </div>
         ),

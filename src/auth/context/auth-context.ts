@@ -1,5 +1,7 @@
 import { createContext, useContext } from 'react';
 import { AuthModel, UserModel } from '@/auth/lib/models';
+import { AxiosResponse } from "axios"
+
 
 // Create AuthContext with types
 export const AuthContext = createContext<{
@@ -23,7 +25,7 @@ export const AuthContext = createContext<{
     password_confirmation: string,
   ) => Promise<void>;
   resendVerificationEmail: (email: string) => Promise<void>;
-  getUser: () => Promise<UserModel | null>;
+  getUser: () => Promise<AxiosResponse<UserModel, any>>;
   updateProfile: (userData: Partial<UserModel>) => Promise<UserModel>;
   logout: () => void;
   verify: () => Promise<void>;

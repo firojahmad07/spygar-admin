@@ -1,4 +1,4 @@
-import { SearchResults } from '../search-results-grid';
+import { SearchResults } from './search-results';
 
 export function SearchResultsListContent() {
   return <SearchResults mode="list" />;

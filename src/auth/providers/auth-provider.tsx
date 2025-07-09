@@ -3,12 +3,20 @@ import { SupabaseAdapter } from '@/auth/adapters/supabase-adapter';
 import { AuthContext } from '@/auth/context/auth-context';
 import * as authHelper from '@/auth/lib/helpers';
 import { AuthModel, UserModel } from '@/auth/lib/models';
+import axios, { AxiosResponse } from 'axios';
+
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+const LOGIN_URL = `${API_URL}/login/admin`;
+const GET_USER_URL = `${API_URL}/user`;
+
 
 // Define the Supabase Auth Provider
 export function AuthProvider({ children }: PropsWithChildren) {
   const [loading, setLoading] = useState(true);
-  const [auth, setAuth] = useState<AuthModel | undefined>(authHelper.getAuth());
-  const [currentUser, setCurrentUser] = useState<UserModel | undefined>();
+  const [auth, setAuth] = useState(authHelper.getAuth());
+  const [currentUser, setCurrentUser] = useState();
   const [isAdmin, setIsAdmin] = useState(false);
 
   // Check if user is admin
@@ -39,8 +47,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const login = async (email: string, password: string) => {
     try {
-      const auth = await SupabaseAdapter.login(email, password);
-      saveAuth(auth);
+      const auth = await axios.post<AuthModel>(LOGIN_URL, {
+        email,
+        password
+      });
+      saveAuth(auth.data);
       const user = await getUser();
       setCurrentUser(user || undefined);
     } catch (error) {
@@ -89,7 +100,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
   };
 
   const getUser = async () => {
-    return await SupabaseAdapter.getCurrentUser();
+    return await axios.get<UserModel>(GET_USER_URL, {
+      headers: {
+        Authorization: `Bearer ${authHelper.getAuth()?.token}`,
+      }
+    });
   };
 
   const updateProfile = async (userData: Partial<UserModel>) => {

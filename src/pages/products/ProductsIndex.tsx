@@ -1,26 +1,32 @@
-import { Route, Routes, Navigate } from 'react-router-dom'
+import { Route, Routes, Navigate, useLocation } from 'react-router-dom'
 import { useContext, useEffect, useMemo } from 'react';
 import { SidebarContext } from '@/providers/sidebar-provider';
 
-import { AllProductsPage, DashboardPage } from '@/pages/store-admin';
+import { AllProductsPage } from '@/pages/store-admin';
+import {
+ProductIndex
+} from "@/pages/products/components/ProductIndex"
 
-const ProductsIndex = () => {
-    const context = useContext(SidebarContext)
+const ProductsIndex = () => {    
+    const context = useContext(SidebarContext);
+    const location = useLocation();
     const sideBarMenuData = useMemo(
         () => [],
         []
     );
     
     useEffect(() => {
-        if (context?.setSidebarMenu) {
+        const isProductEditPage = location.pathname.includes('/edit/');
+        if (!isProductEditPage && context?.setSidebarMenu) {
             context.setSidebarMenu(sideBarMenuData);
         }
-    }, [context]);
+    }, [context, location.pathname]);
 
     return (
         <Routes>
             <Route>
                 <Route path='/listing' element={<AllProductsPage />} />
+                <Route path='/:id/edit/*' element={<ProductIndex />} />
                 <Route path='/proposals' element={<AllProductsPage />} />
             </Route>
             <Route index element={<Navigate to='/listing' />} />
