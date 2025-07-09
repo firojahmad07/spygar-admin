@@ -1,13 +1,10 @@
 'use client';
 
 import { useMemo, useEffect, useState } from 'react';
-import { StoreAdminCreateShippingLabelSheet } from '@/pages/store-admin/components/create-shipping-label-sheet';
-import { RiCheckboxCircleFill } from '@remixicon/react';
-import { Badge, BadgeDot, BadgeProps } from '@/components/ui/badge';
 import apiFetcher from '@/fetcher/apiFetcher';
 import { AxiosResponse } from "axios"
+import { Link } from 'react-router';
 
-const defaultAvatar = "";
 import {
   ColumnDef,
   getCoreRowModel,
@@ -20,14 +17,11 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
-  Database,
-  EllipsisVertical,
-  LogIn,
-  LogOut,
   Search,
   Trash2,
   SquarePen,
   X,
+  Plus
 } from 'lucide-react';
 
 import { toast } from 'sonner';
@@ -41,106 +35,16 @@ import { DataGridColumnHeader } from '@/components/ui/data-grid-column-header';
 import { DataGridPagination } from '@/components/ui/data-grid-pagination';
 import {
   DataGridTable,
-  DataGridTableRowSelect,
-  DataGridTableRowSelectAll,
 } from '@/components/ui/data-grid-table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+
+
 import { Input } from '@/components/ui/input';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
-import { formatDate } from 'date-fns';
-
-interface IProductInfo {
-  product: string;
-  name: string;
-  sku: string;
-}
-
-interface IStock {
-  value1: number;
-  value2: number;
-  value3: number;
-}
-
-interface IDelta {
-  label: string;
-  variant:
-    | 'info'
-    | 'primary'
-    | 'secondary'
-    | 'success'
-    | 'warning'
-    | 'mono'
-    | 'destructive'
-    | null
-    | undefined;
-}
-
-interface ISupplier {
-  logo: string;
-  name: string;
-}
 
 interface IData {
   id: string;
   code: string;
-}
-
-function ActionsCell({ row }: { row: Row<IData> }) {
-  const { copyToClipboard } = useCopyToClipboard();
-  const handleCopyId = () => {
-    copyToClipboard(String(row.original.id));
-    const message = `User ID successfully copied: ${row.original.id}`;
-    toast.custom(
-      (t) => (
-        <Alert
-          variant="mono"
-          icon="success"
-          close={false}
-          onClose={() => toast.dismiss(t)}
-        >
-          <AlertIcon>
-            <RiCheckboxCircleFill />
-          </AlertIcon>
-          <AlertTitle>{message}</AlertTitle>
-        </Alert>
-      ),
-      {
-        position: 'top-center',
-      },
-    );
-  };
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button className="size-7" mode="icon" variant="ghost">
-          <EllipsisVertical />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent side="bottom" align="end">
-        <DropdownMenuItem onClick={() => {}}>Edit</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleCopyId}>Copy ID</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onClick={() => {}}>
-          Delete
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
 }
 export interface User {
   id: string;
@@ -150,11 +54,6 @@ export interface User {
 export interface UsersResponse {
   member: User[];
   totalItems: number,
-  meta: {
-    pageIndex: number;
-    pageSize: number;
-    // any other pagination info
-  };
 }
 
 export function ChannelsData() {
@@ -167,53 +66,23 @@ export function ChannelsData() {
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'id', desc: true },
   ]);
+  const { pageIndex, pageSize } = pagination;
+
   useEffect( () => {
-    apiFetcher.get<UsersResponse, any>('/channels')
+    const page = pageIndex + 1;
+    const size = pageSize;
+    let url = `/channels?page=${page}&size=${size}`;
+
+    apiFetcher.get<UsersResponse, any>(url)
       .then((responseData: AxiosResponse<UsersResponse, any>) => {
         setData(responseData.member);
-        setPagination(responseData.meta);
         setTotalItems(responseData.totalItems)
       });
-  }, []);
+  }, [pageIndex, pageSize]);
   
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStatuses] = useState<string[]>([]);
-  // const [userData, setUsersData] = useState([])
-  // const loadUsers = async () => {
-
-
-
-  // const filteredData = useMemo(() => {
-  //   return data.filter((item) => {
-  //     // Filter by status
-  //     const matchesStatus =
-  //       !selectedStatuses?.length || selectedStatuses.includes(item.info.fullName);
-
-  //     // Filter by search query (case-insensitive)
-  //     const searchLower = searchQuery.toLowerCase();
-  //     const matchesSearch =
-  //       !searchQuery ||
-  //       item.category.toLowerCase().includes(searchLower) ||
-  //       item.supplier.name.toLowerCase().includes(searchLower) ||
-  //       item.price.toLowerCase().includes(searchLower);
-
-  //     return matchesStatus && matchesSearch;
-  //   });
-  // }, [searchQuery, selectedStatuses]);
-
   const columns = useMemo<ColumnDef<IData>[]>(
     () => [
-      {
-        accessorKey: 'id',
-        accessorFn: (row) => row.id,
-        header: () => <DataGridTableRowSelectAll />,
-        cell: ({ row }) => <DataGridTableRowSelect row={row} />,
-        enableSorting: false,
-        enableHiding: false,
-        enableResizing: false,
-        size: 51,
-        meta: { cellClassName: '' },
-      },
       {
         id: 'info',
         accessorFn: (row) => row.code,
@@ -243,9 +112,9 @@ export function ChannelsData() {
                 <Trash2 size={16} className="text-sm text-muted-foreground" />
               </span>
               <span className="border-r border-r-input h-4"></span>
-              <span className="flex items-center gap-1">
+              <Link to={`/settings/channel/${row.original.id}/edit`} className="flex items-center gap-1">
                 <SquarePen size={16} className="text-sm text-muted-foreground" />
-              </span>
+              </Link>
             </span>
           </div>
         ),
@@ -259,23 +128,6 @@ export function ChannelsData() {
     [],
   );
 
-  // const table = useReactTable({
-  //   // columns,
-  //   // data: usersData,
-  //   // pageCount: 15
-  //   // getRowId: (row: IData) => row.id,
-  //   // state: {
-  //     // pagination,
-  //     // sorting,
-  //   // }
-  //   // onPaginationChange: setPagination,
-  //   // onSortingChange: setSorting,
-  //   // getCoreRowModel: getCoreRowModel(),
-  //   // getFilteredRowModel: getFilteredRowModel(),
-  //   // getPaginationRowModel: getPaginationRowModel(),
-  //   // getSortedRowModel: getSortedRowModel(),
-  // });
-
   const table = useReactTable({
     columns,
     data: data,
@@ -283,6 +135,7 @@ export function ChannelsData() {
     state: {
       pagination
     },
+    manualPagination: true,
     onPaginationChange: setPagination,
     getRowId: (row: IData) => row.id,
     getCoreRowModel: getCoreRowModel(),
@@ -290,18 +143,6 @@ export function ChannelsData() {
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
-
-  const handleTrackShippingSheetClose = () => {
-    setTrackShippingSheetOpen(false);
-  };
-
-  const handleTrackShippingSheetOpen = () => {
-    setTrackShippingSheetOpen(true);
-  };
-
-  const handleCreateShippingLabelSheetClose = () => {
-    setCreateShippingLabelSheetOpen(false);
-  };
 
   const handleCreateShippingLabelSheetOpen = () => {
     setCreateShippingLabelSheetOpen(true);
@@ -324,7 +165,7 @@ export function ChannelsData() {
             <div className="relative w-full max-w-[200px]">
               <Search className="size-4 text-muted-foreground absolute start-3 top-1/2 -translate-y-1/2" />
               <Input
-                placeholder="Search by ID"
+                placeholder="Search by code"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="ps-9 w-40"
@@ -340,43 +181,12 @@ export function ChannelsData() {
                 </Button>
               )}
             </div>
-            <div className="flex gap-3">
-              <Select>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="outdoor">Outdoor</SelectItem>
-                  <SelectItem value="runners">Runners</SelectItem>
-                  <SelectItem value="sneakers">Sneakers</SelectItem>
-                  <SelectItem value="outdoor">Outdoor</SelectItem>
-                  <SelectItem value="runners">Runners</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Supplier" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="swift-stock">SwiftStock</SelectItem>
-                  <SelectItem value="core-mart">CoreMart</SelectItem>
-                  <SelectItem value="prime-stock">PrimeStock</SelectItem>
-                  <SelectItem value="stock-lab">StockLab</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
-
           <>
             <Button variant="primary" 
               onClick={handleCreateShippingLabelSheetOpen}>
-              Create
+              <Plus /> Create
             </Button>
-            {/* <StoreAdminCreateShippingLabelSheet
-              open={isCreateShippingLabelSheetOpen}
-              onOpenChange={handleCreateShippingLabelSheetClose}
-            /> */}
           </>
         </CardHeader>
         <CardFooter>

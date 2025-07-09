@@ -365,41 +365,6 @@ export function AppRoutingSetup() {
             path="/auth/account-deactivated"
             element={<AuthAccountDeactivatedPage />}
           />
-          {/* <Route path="/store-client/home" element={<StoreClientPage />} />
-          <Route
-            path="/store-client/search-results-grid"
-            element={<SearchResultsGridPage />}
-          /> */}
-          {/* <Route
-            path="/store-client/search-results-list"
-            element={<SearchResultsListPage />}
-          />
-          <Route
-            path="/store-client/product-details"
-            element={<ProductDetailsPage />}
-          />
-          <Route path="/store-client/wishlist" element={<WishlistPage />} />
-          <Route
-            path="/store-client/checkout/order-summary"
-            element={<OrderSummaryPage />}
-          />
-          <Route
-            path="/store-client/checkout/shipping-info"
-            element={<ShippingInfoPage />}
-          />
-          <Route
-            path="/store-client/checkout/payment-method"
-            element={<PaymentMethodPage />}
-          />
-          <Route
-            path="/store-client/checkout/order-placed"
-            element={<OrderPlacedPage />}
-          />
-          <Route path="/store-client/my-orders" element={<MyOrdersPage />} />
-          <Route
-            path="/store-client/order-receipt"
-            element={<OrderReceiptPage />}
-          /> */}
           <Route path="/store-admin/dashboard" element={<DashboardPage />} />
           <Route
             path="/store-admin/inventory/all-products"

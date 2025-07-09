@@ -129,6 +129,7 @@ function DataGrid<TData extends object>({
 }: DataGridProps<TData>) {
   const defaultProps: Partial<DataGridProps<TData>> = {
     loadingMode: 'skeleton',
+
     tableLayout: {
       dense: false,
       cellBorder: false,

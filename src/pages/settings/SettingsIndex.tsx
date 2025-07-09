@@ -7,7 +7,7 @@ import { AllProductsPage, DashboardPage } from '@/pages/store-admin';
 import { ChannelsIndex } from './channels/Index';
 import { CurrenciesIndex } from './currencies/Index';
 import { LocalesIndex } from './locales/Index';
-
+import { EditChannel } from './channels/components/EditChannel';
 
 const SettingsIndex = () => {
     const context = useContext(SidebarContext)
@@ -44,7 +44,10 @@ const SettingsIndex = () => {
             <Route>
                 {/* Catalog settings */}
                 <Route path='/categories' element={ <AllProductsPage /> } />
+
                 <Route path='/channels' element={<ChannelsIndex />} />
+                <Route path='/channel/:id/edit' element={<EditChannel />} />
+
                 <Route path='/currencies' element={<CurrenciesIndex />} />
                 <Route path='/locales' element={ <LocalesIndex /> } />
                 {/* Product settings */}

@@ -153,12 +153,7 @@ export interface User {
 }
 export interface UsersResponse {
   member: User[];
-  totalItems: number,
-  meta: {
-    pageIndex: number;
-    pageSize: number;
-    // any other pagination info
-  };
+  totalItems: number,  
 }
 
 export function LocalesData() {
@@ -168,42 +163,25 @@ export function LocalesData() {
     pageIndex: 0,
     pageSize: 10,
   });
+
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'id', desc: true },
   ]);
+  const { pageIndex, pageSize } = pagination;
   useEffect( () => {
-    apiFetcher.get<UsersResponse, any>('/locales')
+    const page = pageIndex + 1;
+    const size = pageSize;
+    let url = `/locales?page=${page}&size=${size}`;
+
+    apiFetcher.get<UsersResponse, any>(url)
       .then((responseData: AxiosResponse<UsersResponse, any>) => {
         setData(responseData.member);
-        setPagination(responseData.meta);
         setTotalItems(responseData.totalItems)
       });
-  }, []);
+  }, [pageIndex, pageSize]);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatuses] = useState<string[]>([]);
-  // const [userData, setUsersData] = useState([])
-  // const loadUsers = async () => {
-
-
-
-  // const filteredData = useMemo(() => {
-  //   return data.filter((item) => {
-  //     // Filter by status
-  //     const matchesStatus =
-  //       !selectedStatuses?.length || selectedStatuses.includes(item.info.fullName);
-
-  //     // Filter by search query (case-insensitive)
-  //     const searchLower = searchQuery.toLowerCase();
-  //     const matchesSearch =
-  //       !searchQuery ||
-  //       item.category.toLowerCase().includes(searchLower) ||
-  //       item.supplier.name.toLowerCase().includes(searchLower) ||
-  //       item.price.toLowerCase().includes(searchLower);
-
-  //     return matchesStatus && matchesSearch;
-  //   });
-  // }, [searchQuery, selectedStatuses]);
 
   const columns = useMemo<ColumnDef<IData>[]>(
     () => [
@@ -305,23 +283,6 @@ export function LocalesData() {
     [],
   );
 
-  // const table = useReactTable({
-  //   // columns,
-  //   // data: usersData,
-  //   // pageCount: 15
-  //   // getRowId: (row: IData) => row.id,
-  //   // state: {
-  //     // pagination,
-  //     // sorting,
-  //   // }
-  //   // onPaginationChange: setPagination,
-  //   // onSortingChange: setSorting,
-  //   // getCoreRowModel: getCoreRowModel(),
-  //   // getFilteredRowModel: getFilteredRowModel(),
-  //   // getPaginationRowModel: getPaginationRowModel(),
-  //   // getSortedRowModel: getSortedRowModel(),
-  // });
-
   const table = useReactTable({
     columns,
     data: data,
@@ -329,6 +290,7 @@ export function LocalesData() {
     state: {
       pagination
     },
+    manualPagination: true,
     onPaginationChange: setPagination,
     getRowId: (row: IData) => row.id,
     getCoreRowModel: getCoreRowModel(),
@@ -337,26 +299,10 @@ export function LocalesData() {
     getSortedRowModel: getSortedRowModel(),
   });
 
-  const handleTrackShippingSheetClose = () => {
-    setTrackShippingSheetOpen(false);
-  };
-
-  const handleTrackShippingSheetOpen = () => {
-    setTrackShippingSheetOpen(true);
-  };
-
-  const handleCreateShippingLabelSheetClose = () => {
-    setCreateShippingLabelSheetOpen(false);
-  };
-
-  const handleCreateShippingLabelSheetOpen = () => {
-    setCreateShippingLabelSheetOpen(true);
-  };
-
   return (
     <DataGrid
       table={table}
-      recordCount={data?.length || 0}
+      recordCount={totalItems || 0}
       tableLayout={{
         columnsPinnable: false,
         columnsMovable: true,
@@ -413,17 +359,6 @@ export function LocalesData() {
               </Select>
             </div>
           </div>
-
-          <>
-            <Button variant="primary" 
-              onClick={handleCreateShippingLabelSheetOpen}>
-              Create
-            </Button>
-            {/* <StoreAdminCreateShippingLabelSheet
-              open={isCreateShippingLabelSheetOpen}
-              onOpenChange={handleCreateShippingLabelSheetClose}
-            /> */}
-          </>
         </CardHeader>
         <CardFooter>
           <DataGridPagination />

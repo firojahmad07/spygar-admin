@@ -160,48 +160,36 @@ export interface UsersResponse {
 }
 
 export function CurrenciesData() {
-  const [data, setData] = useState([]);
-  const [totalItems, setTotalItems] = useState(0);
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: 'id', desc: true },
-  ]);
-  useEffect( () => {
-    apiFetcher.get<UsersResponse, any>('/currencies')
-      .then((responseData: AxiosResponse<UsersResponse, any>) => {
-        setData(responseData.member);
-        setPagination(responseData.meta);
-        setTotalItems(responseData.totalItems)
-      });
-  }, []);
-  
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStatuses] = useState<string[]>([]);
-  // const [userData, setUsersData] = useState([])
-  // const loadUsers = async () => {
+    const [data, setData] = useState([]);
+    const [totalItems, setTotalItems] = useState(0);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [status, setStatus] = useState('all');
+    const [pagination, setPagination] = useState<PaginationState>({
+      pageIndex: 0,
+      pageSize: 10,
+    });
+    const [sorting, setSorting] = useState<SortingState>([
+      { id: 'id', desc: true },
+    ]);
 
+    const { pageIndex, pageSize } = pagination;
 
+    useEffect( () => {
+      const page = pageIndex + 1;
+      const size = pageSize;
+      let url = `/currencies?page=${page}&size=${size}`;
+      if (status != 'all') {
+          url = `/currencies?page=${page}&size=${size}&isActive=${status}`;
+      }
 
-  // const filteredData = useMemo(() => {
-  //   return data.filter((item) => {
-  //     // Filter by status
-  //     const matchesStatus =
-  //       !selectedStatuses?.length || selectedStatuses.includes(item.info.fullName);
-
-  //     // Filter by search query (case-insensitive)
-  //     const searchLower = searchQuery.toLowerCase();
-  //     const matchesSearch =
-  //       !searchQuery ||
-  //       item.category.toLowerCase().includes(searchLower) ||
-  //       item.supplier.name.toLowerCase().includes(searchLower) ||
-  //       item.price.toLowerCase().includes(searchLower);
-
-  //     return matchesStatus && matchesSearch;
-  //   });
-  // }, [searchQuery, selectedStatuses]);
+      console.log("status : ", status, url);
+      apiFetcher.get<UsersResponse, any>(url)
+        .then((responseData: AxiosResponse<UsersResponse, any>) => {
+          setData(responseData.member);
+          setTotalItems(responseData.totalItems)
+        });
+    }, [pageIndex, pageSize, status]);
+    
 
   const columns = useMemo<ColumnDef<IData>[]>(
     () => [
@@ -283,24 +271,6 @@ export function CurrenciesData() {
     ],
     [],
   );
-
-  // const table = useReactTable({
-  //   // columns,
-  //   // data: usersData,
-  //   // pageCount: 15
-  //   // getRowId: (row: IData) => row.id,
-  //   // state: {
-  //     // pagination,
-  //     // sorting,
-  //   // }
-  //   // onPaginationChange: setPagination,
-  //   // onSortingChange: setSorting,
-  //   // getCoreRowModel: getCoreRowModel(),
-  //   // getFilteredRowModel: getFilteredRowModel(),
-  //   // getPaginationRowModel: getPaginationRowModel(),
-  //   // getSortedRowModel: getSortedRowModel(),
-  // });
-
   const table = useReactTable({
     columns,
     data: data,
@@ -308,6 +278,7 @@ export function CurrenciesData() {
     state: {
       pagination
     },
+    manualPagination: true,
     onPaginationChange: setPagination,
     getRowId: (row: IData) => row.id,
     getCoreRowModel: getCoreRowModel(),
@@ -316,26 +287,10 @@ export function CurrenciesData() {
     getSortedRowModel: getSortedRowModel(),
   });
 
-  const handleTrackShippingSheetClose = () => {
-    setTrackShippingSheetOpen(false);
-  };
-
-  const handleTrackShippingSheetOpen = () => {
-    setTrackShippingSheetOpen(true);
-  };
-
-  const handleCreateShippingLabelSheetClose = () => {
-    setCreateShippingLabelSheetOpen(false);
-  };
-
-  const handleCreateShippingLabelSheetOpen = () => {
-    setCreateShippingLabelSheetOpen(true);
-  };
-
   return (
     <DataGrid
       table={table}
-      recordCount={data?.length || 0}
+      recordCount={totalItems || 0}
       tableLayout={{
         columnsPinnable: false,
         columnsMovable: true,
@@ -366,43 +321,18 @@ export function CurrenciesData() {
               )}
             </div>
             <div className="flex gap-3">
-              <Select>
+              <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Category" />
+                  <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="outdoor">Outdoor</SelectItem>
-                  <SelectItem value="runners">Runners</SelectItem>
-                  <SelectItem value="sneakers">Sneakers</SelectItem>
-                  <SelectItem value="outdoor">Outdoor</SelectItem>
-                  <SelectItem value="runners">Runners</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Supplier" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="swift-stock">SwiftStock</SelectItem>
-                  <SelectItem value="core-mart">CoreMart</SelectItem>
-                  <SelectItem value="prime-stock">PrimeStock</SelectItem>
-                  <SelectItem value="stock-lab">StockLab</SelectItem>
+                  <SelectItem value="1">Active</SelectItem>
+                  <SelectItem value="0">Inactive</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
-
-          <>
-            <Button variant="primary" 
-              onClick={handleCreateShippingLabelSheetOpen}>
-              Create
-            </Button>
-            {/* <StoreAdminCreateShippingLabelSheet
-              open={isCreateShippingLabelSheetOpen}
-              onOpenChange={handleCreateShippingLabelSheetClose}
-            /> */}
-          </>
         </CardHeader>
         <CardFooter>
           <DataGridPagination />
